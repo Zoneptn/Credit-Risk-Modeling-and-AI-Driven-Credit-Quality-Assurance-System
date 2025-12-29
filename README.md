@@ -22,3 +22,17 @@ This project addresses these issues by combining:
 - Machine-learning based PD scoring
 - Business risk banding
 - LLM-based policy and market interpretation
+
+## 🧠 System Architecture
+
+```
+User (Streamlit)
+         ↓
+Lite PD Model (LightGBM)
+         ↓
+PD + Risk Band
+         ↓
+RAG (Credit Policy)
+         ↓
+Explainable Credit Recommendation
+```
