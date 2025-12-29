@@ -36,3 +36,27 @@ RAG (Credit Policy)
          ↓
 Explainable Credit Recommendation
 ```
+
+## ⚙️ Model Selection
+
+Three models were evaluated for Probability of Default (PD) prediction:
+
+- Logistic Regression (baseline)
+- XGBoost
+- LightGBM
+
+Each model was trained and evaluated using ROC–AUC and KS statistics. 
+Hyperparameter tuning was applied using cross-validation.
+
+The tuned LightGBM model achieved the strongest discriminatory power and was therefore selected as the final PD engine for deployment.
+
+
+## Model Performanc Comparision
+
+| Model                | Precision | Recall | F1-Score | ROC-AUC | KS |
+|---------------------|-----------|--------|----------|--------|----|
+| **LightGBM (Grid)**  | **0.36**   | **0.66** | **0.46** | **0.71** | **0.31** |
+| XGBoost (Grid)      | 0.36      | 0.66   | 0.46     | 0.71   | 0.30 |
+| LightGBM            | 0.35      | 0.67   | 0.46     | 0.71   | 0.30 |
+| XGBoost             | 0.35      | 0.64   | 0.45     | 0.70   | 0.29 |
+| Logistic Regression | 0.35      | 0.63   | 0.45     | 0.70   | 0.29 |
