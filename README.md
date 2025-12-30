@@ -135,3 +135,15 @@ Start the Streamlit app:
 ```
 python -m streamlit run app.py
 ```
+
+## 🛠 Tech Stack
+- Python
+- LightGBM
+- XGBoost
+- Scikit-learn
+- Streamlit
+- FastAPI
+- LlamaIndex / RAG
+- OpenAI Embeddings
+
+⚠ This project uses simulated credit policy and does not represent any real bank’s underwriting rules.
