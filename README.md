@@ -51,7 +51,7 @@ Hyperparameter tuning was applied using cross-validation.
 The tuned LightGBM model achieved the strongest discriminatory power and was therefore selected as the final PD engine for deployment.
 
 
-## Model Performanc Comparision
+## Model Performance Comparision
 
 | Model                | Precision | Recall | F1-Score | ROC-AUC | KS |
 |---------------------|-----------|--------|----------|--------|--------|
@@ -62,3 +62,74 @@ The tuned LightGBM model achieved the strongest discriminatory power and was the
 | Logistic Regression | 0.3529 | 0.6316 | 0.4528 | 0.6960 | 0.2881 |
 
 Among all tested models, the tuned LightGBM achieved the highest KS and ROC-AUC, indicating superior risk separation, and was therefore selected as the final Probability-of-Default engine
+
+*** This is not the actual credit risk policy.
+
+
+### Risk Bands & Credit Policy
+
+Model outputs are converted into business decisions using a four-tier risk policy:
+
+| PD Range | Decision |
+|---------|--------|
+| PD ≥ 30% | Reject |
+| 20% ≤ PD < 30% | QA Review |
+| 5% ≤ PD < 20% | Approve with Caution |
+| PD < 5% | Approve |
+
+This transforms raw model probabilities into operational credit actions suitable for underwriting and Credit QA workflows.
+
+## RAG-Based Explainable Credit Decisions
+
+Retrieval-Augmented Generation (RAG) is used to ensure that credit decisions are aligned with bank policies and market context.
+
+Credit policy documents and market outlooks are embedded into a vector database.  
+When a loan is scored, the system retrieves the most relevant policy text and uses a large language model to generate an explanation based on those documents.
+
+This allows the system to answer questions such as:
+- Why is this loan considered risky?
+- Which credit policy rules apply?
+- What the recommended action should be?
+
+*** This is not the acutual bank policy
+
+## 🌐 Streamlit Application
+
+A Streamlit web app is provided to simulate a real-time loan pre-screening tool.
+
+Users can input:
+- Annual income
+- Debt-to-income ratio
+- Loan amount
+- Interest rate
+
+The app then:
+1. Computes the Probability of Default using the Lite PD model  
+2. Assigns a risk band  
+3. Calls the RAG engine to generate a policy-aware credit recommendation  
+
+This replicates how credit analysts and QA teams interact with risk models in practice.
+
+### Demo
+### Loan Risk Scoreing
+
+### RAG-Based Credit Recommendation
+
+
+### How to run Locally
+
+## 🚀 How to Run Locally
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+Start the RAG backend:
+```
+python -m uvicorn rag_server:app --reload
+```
+Start the Streamlit app:
+```
+python -m streamlit run app.py
+```
