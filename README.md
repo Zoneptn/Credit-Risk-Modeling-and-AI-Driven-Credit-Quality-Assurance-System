@@ -65,6 +65,17 @@ Among all tested models, the tuned LightGBM achieved the highest KS and ROC-AUC,
 
 *** This is not the actual credit risk policy.
 
+## 📐 Probability Calibration
+
+In credit risk modeling, well-calibrated probabilities are important because PD values are used for:
+- Risk banding
+- Portfolio risk estimates
+- Policy thresholds
+
+After selecting the best-performing LightGBM model, probability calibration (e.g., isotonic or Platt scaling) can be applied to align predicted PDs with observed default rates.
+
+In this project, model discrimination (ROC-AUC, KS) was the primary selection criterion, and the resulting PDs are used as inputs to the business risk bands and RAG-based decision logic.
+
 
 ### Risk Bands & Credit Policy
 
