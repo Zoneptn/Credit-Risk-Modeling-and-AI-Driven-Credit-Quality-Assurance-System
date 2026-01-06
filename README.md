@@ -260,6 +260,5 @@ C) LLM + RAG
 D) App & Deployment
 - streamlit
 - joblib
-- 
 ---
 ⚠ This project uses simulated credit policy and does not represent any real bank’s underwriting rules.
