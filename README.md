@@ -59,7 +59,7 @@ The tuned LightGBM model achieved the strongest discriminatory power and was the
 
 ## Model Performance Comparision
 
-# Validation Set
+### Validation Set
 | Model                      | Precision  | Recall     | F1-Score   | ROC-AUC    | KS Statistic |
 | -------------------------- | ---------- | ---------- | ---------- | ---------- | ------------ |
 | **LightGBM (Grid Search)** | **0.3558** | 0.6558     | **0.4613** | **0.7111** | **0.3072**   |
@@ -81,6 +81,9 @@ The tuned LightGBM model achieved the strongest discriminatory power and was the
 From a credit-risk perspective, risk ranking quality and stability matter more than raw recall.
 Therefore, LightGBM (Grid Search) is selected as the final Probability-of-Default model because it provides the best balance of discrimination power, stability, and robustness for downstream QA, Expected Loss, and policy-based decisioning.
 
+### Shap Comparision
+![Shap]()
+
 ## 📐 Probability Calibration
 
 In credit risk modeling, well-calibrated probabilities are important because PD values are used for:
@@ -101,7 +104,7 @@ In this project, model discrimination (ROC-AUC, KS) was the primary selection cr
 Although calibration slightly reduces ROC-AUC and KS, it substantially improves the Brier score, which measures how accurate the predicted probabilities are. This means the calibrated LightGBM model produces more reliable and realistic PD estimates, making it suitable for policy thresholds, Expected Loss calculations, and regulatory-style credit decisioning. As a result, the calibrated model is used for all downstream risk, QA, and financial impact analysis, while the uncalibrated model remains useful for pure risk ranking and explainability.
 
 
-### Risk Bands & Credit Policy
+## Risk Bands & Credit Policy
 This project applies a policy-driven Quality Assurance (QA) framework on top of the machine-learning Probability of Default (PD) model to simulate how banks make real credit decisions.
 
 Each loan is evaluated using:
@@ -154,37 +157,63 @@ This mirrors how banks combine risk models, financial loss, and credit policy to
 
 ## RAG-Based Explainable Credit Decisions
 
-Retrieval-Augmented Generation (RAG) is used to ensure that credit decisions are aligned with bank policies and market context.
+This project uses **Retrieval-Augmented Generation (RAG)** to produce **policy-aware**, **explainable credit decisions** for each loan.
 
-Credit policy documents and market outlooks are embedded into a vector database.  
-When a loan is scored, the system retrieves the most relevant policy text and uses a large language model to generate an explanation based on those documents.
+For every QA case, the system combines:
 
-This allows the system to answer questions such as:
-- Why is this loan considered risky?
-- Which credit policy rules apply?
-- What the recommended action should be?
+- **Model outputs**:
 
-*** This is not the acutual bank policy
+         - Probability of Default (PD)
 
-## 🌐 Streamlit Application
+         - Loss Given Default (LGD)
 
-A Streamlit web app is provided to simulate a real-time loan pre-screening tool.
+         - Expected Loss
 
-Users can input:
-- Annual income
-- Debt-to-income ratio
-- Loan amount
-- Interest rate
+- **Risk signals**:
 
-The app then:
-1. Computes the Probability of Default using the Lite PD model  
-2. Assigns a risk band  
-3. Calls the RAG engine to generate a policy-aware credit recommendation  
+         - Policy segment
 
-This replicates how credit analysts and QA teams interact with risk models in practice.
+         - Segment default rate
 
+         - SHAP-based risk drivers
+
+-**Bank credit policy** (retrieved from PDF documents)
+
+These inputs are passed to a large language model that acts as a Credit Quality Assurance analyst.
+
+## 🖥 Interactive Credit QA Dashboard (Streamlit)
+
+This project includes an interactive **Credit Quality Assurance dashboard** built with Streamlit, simulating how banks review and validate loan decisions.
+
+The dashboard integrates:
+
+- Machine-learning risk outputs (PD)
+
+- Economic loss estimates (Expected Loss)
+
+- Policy-based risk segmentation
+
+- LLM-powered credit explanations
+
+### What the dashboard provides
+
+Credit analysts can:
+
+- Browse a portfolio of loan cases
+
+- Select individual loans for detailed review
+
+- See key borrower metrics (DTI, LTI, utilization, employment, verification)
+
+- View model-based risk (PD)
+
+- See financial impact (Expected Loss)
+
+- Review policy classification (QA / Reject)
+
+- Receive AI-generated explanations and next-step recommendations
 ### Demo
-### Loan Risk Scoreing
+
 ![Loan Scoring](/screenshot/app.png)
 
 ### RAG-Based Credit Recommendation
@@ -200,23 +229,38 @@ Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-Start the RAG backend:
-```
-python -m uvicorn rag_server:app --reload
-```
 Start the Streamlit app:
 ```
 python -m streamlit run app.py
 ```
 
 ## 🛠 Tech Stack
-- Python
-- LightGBM
-- XGBoost
-- Scikit-learn
-- Streamlit
-- FastAPI
-- LlamaIndex / RAG
-- OpenAI Embeddings
+A) Data & ML
+- pandas
+- numpy
+- scikit-learn
+- xgboost
+- lightgbm
+- catboost
+- scipy
+- shap
 
+B) Visualization & EDA
+
+- matplotlib
+- seaborn
+
+C) LLM + RAG
+- langchain
+- langchain-community
+- langchain-openai
+- langchain-huggingface
+- faiss-cpu
+- openai (via langchain_openai)
+
+D) App & Deployment
+- streamlit
+- joblib
+- 
+---
 ⚠ This project uses simulated credit policy and does not represent any real bank’s underwriting rules.
