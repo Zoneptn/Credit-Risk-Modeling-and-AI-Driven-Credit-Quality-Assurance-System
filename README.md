@@ -214,8 +214,11 @@ Credit analysts can:
 - Receive AI-generated explanations and next-step recommendations
 ### Demo
 
+#### Demo1
 ![Demo1](/screenshot/app2.png)
 
+
+#### Demo2
 ![Demo2](/screenshot/app1.png)
 
 
