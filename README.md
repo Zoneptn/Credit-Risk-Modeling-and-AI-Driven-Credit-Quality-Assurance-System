@@ -214,10 +214,9 @@ Credit analysts can:
 - Receive AI-generated explanations and next-step recommendations
 ### Demo
 
-![Loan Scoring](/screenshot/app1.png)
+![Demo1](/screenshot/app2.png)
 
-### RAG-Based Credit Recommendation
-![RAG](/screenshot/app2.png)
+![Demo2](/screenshot/app1.png)
 
 
 ### How to run Locally
