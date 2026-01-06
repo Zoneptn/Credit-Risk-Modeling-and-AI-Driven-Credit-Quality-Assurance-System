@@ -82,7 +82,7 @@ From a credit-risk perspective, risk ranking quality and stability matter more t
 Therefore, LightGBM (Grid Search) is selected as the final Probability-of-Default model because it provides the best balance of discrimination power, stability, and robustness for downstream QA, Expected Loss, and policy-based decisioning.
 
 ### Shap Comparision
-![Shap]()
+![Shap](/screenshot/shap.png)
 
 ## 📐 Probability Calibration
 
@@ -214,10 +214,10 @@ Credit analysts can:
 - Receive AI-generated explanations and next-step recommendations
 ### Demo
 
-![Loan Scoring](/screenshot/app.png)
+![Loan Scoring](/screenshot/app1.png)
 
 ### RAG-Based Credit Recommendation
-![RAG](/screenshot/rag.png)
+![RAG](/screenshot/app2.png)
 
 
 ### How to run Locally
