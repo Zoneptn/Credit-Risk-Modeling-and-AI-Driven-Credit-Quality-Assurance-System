@@ -9,19 +9,25 @@ The goal is not just to predict default, but to support consistent, explainable,
 
 ## 🏦 Business Problem
 
-Traditional credit pre-screening often relies on:
+Banks must ensure that lending decisions are:
+- **Risk-aware**
+- **Policy-compliant**
+- **Explainable to auditors and regulators**
 
-- Hard rules (e.g., DTI < 40%)
-- Manual reviews
-- Inconsistent judgment across analysts
+Traditional credit workflows rely on:
+- PD models without clear explanations  
+- Static rule-based systems  
+- Manual and inconsistent QA reviews  
 
-These approaches do not scale well and can miss emerging risk patterns.
+These approaches do not scale well and make it difficult to demonstrate why a loan was approved or rejected.
 
-This project addresses these issues by combining:
+This project addresses these issues by integrating:
+- Machine-learning based PD scoring  
+- Rule-based credit policy segmentation  
+- LLM-powered policy interpretation and reasoning  
 
-- Machine-learning based PD scoring
-- Business risk banding
-- LLM-based policy and market interpretation
+to produce **consistent, transparent, and auditable credit decisions**.
+
 
 ## 🧠 System Architecture
 
@@ -53,17 +59,27 @@ The tuned LightGBM model achieved the strongest discriminatory power and was the
 
 ## Model Performance Comparision
 
-| Model                | Precision | Recall | F1-Score | ROC-AUC | KS |
-|---------------------|-----------|--------|----------|--------|--------|
-| **LightGBM (Grid)**  | **0.3552** | **0.6632** | **0.4626** | **0.7108** | **0.3069** |
-| XGBoost (Grid)      | 0.3552 | 0.6588 | 0.4615 | 0.7103 | 0.3047 |
-| LightGBM            | 0.3528 | 0.6683 | 0.4618 | 0.7092 | 0.3050 |
-| XGBoost             | 0.3540 | 0.6351 | 0.4546 | 0.7015 | 0.2921 |
-| Logistic Regression | 0.3529 | 0.6316 | 0.4528 | 0.6960 | 0.2881 |
+# Validation Set
+| Model                      | Precision  | Recall     | F1-Score   | ROC-AUC    | KS Statistic |
+| -------------------------- | ---------- | ---------- | ---------- | ---------- | ------------ |
+| **LightGBM (Grid Search)** | **0.3558** | 0.6558     | **0.4613** | **0.7111** | **0.3072**   |
+| LightGBM                   | 0.3541     | **0.6612** | 0.4612     | 0.7101     | 0.3067       |
+| XGBoost (Grid Search)      | 0.3510     | **0.6669** | 0.4599     | 0.7076     | 0.3017       |
+| XGBoost                    | 0.3549     | 0.6308     | 0.4543     | 0.7031     | 0.2970       |
+| Logistic Regression        | 0.3522     | 0.6246     |            |            |              |
 
-Among all tested models, the tuned LightGBM achieved the highest KS and ROC-AUC, indicating superior risk separation, and was therefore selected as the final Probability-of-Default engine
+### Testing Set
+| Model                      | Precision  | Recall     | F1-Score   | ROC-AUC    | KS Statistic |
+| -------------------------- | ---------- | ---------- | ---------- | ---------- | ------------ |
+| **LightGBM (Grid Search)** | **0.3568** | 0.6606     | **0.4633** | **0.7097** | **0.3086**   |
+| LightGBM                   | 0.3552     | **0.6653** | 0.4631     | 0.7092     | 0.3064       |
+| XGBoost (Grid Search)      | 0.3512     | **0.6671** | 0.4602     | 0.7067     | 0.3011       |
+| XGBoost                    | 0.3543     | 0.6326     | 0.4542     | 0.6992     | 0.2912       |
+| Logistic Regression        | 0.3528     | 0.6305     | 0.4524     | 0.6952     | 0.2891       |
 
-*** This is not the actual credit risk policy.
+
+From a credit-risk perspective, risk ranking quality and stability matter more than raw recall.
+Therefore, LightGBM (Grid Search) is selected as the final Probability-of-Default model because it provides the best balance of discrimination power, stability, and robustness for downstream QA, Expected Loss, and policy-based decisioning.
 
 ## 📐 Probability Calibration
 
@@ -76,19 +92,65 @@ After selecting the best-performing LightGBM model, probability calibration (e.g
 
 In this project, model discrimination (ROC-AUC, KS) was the primary selection criterion, and the resulting PDs are used as inputs to the business risk bands and RAG-based decision logic.
 
+### Model Calibration Result
+| Model                             | ROC-AUC    | KS Statistic | Brier Score |
+| --------------------------------- | ---------- | ------------ | ----------- |
+| **LightGBM (Before Calibration)** | **0.7097** | **0.3086**   | 0.2148      |
+| **LightGBM (After Calibration)**  | 0.7036     | 0.2969       | **0.1599**  |
+
+Although calibration slightly reduces ROC-AUC and KS, it substantially improves the Brier score, which measures how accurate the predicted probabilities are. This means the calibrated LightGBM model produces more reliable and realistic PD estimates, making it suitable for policy thresholds, Expected Loss calculations, and regulatory-style credit decisioning. As a result, the calibrated model is used for all downstream risk, QA, and financial impact analysis, while the uncalibrated model remains useful for pure risk ranking and explainability.
+
 
 ### Risk Bands & Credit Policy
+This project applies a policy-driven Quality Assurance (QA) framework on top of the machine-learning Probability of Default (PD) model to simulate how banks make real credit decisions.
 
-Model outputs are converted into business decisions using a four-tier risk policy:
+Each loan is evaluated using:
 
-| PD Range | Decision |
-|---------|--------|
-| PD ≥ 30% | Reject |
-| 20% ≤ PD < 30% | QA Review |
-| 5% ≤ PD < 20% | Approve with Caution |
-| PD < 5% | Approve |
+- PD (likelihood of default)
 
-This transforms raw model probabilities into operational credit actions suitable for underwriting and Credit QA workflows.
+- LGD (loss severity)
+
+- Expected Loss (financial impact)
+
+- Policy risk flags (DTI, utilization, stability, verification)
+
+Loans are segmented into four decision groups:
+| Segment                  | Meaning                                 |
+| ------------------------ | --------------------------------------- |
+| **Fast Track**           | Very low risk, auto-approve             |
+| **Approve with Caution** | Acceptable risk                         |
+| **QA**                   | Borderline risk, requires manual review |
+| **Review / Reject**      | High-risk or high-loss loans            |
+
+### Loss-Aware Risk Control
+Expected Loss is calculated as:
+
+$$Expected Loss=𝑃𝐷 ×𝐿𝐺𝐷×Loan Amount$$
+
+This allows the system to prioritize not just who is likely to default, but how costly a default would be.
+
+Loans with:
+
+- High PD
+
+- High Expected Loss
+
+- adverse risk flags
+
+are routed to **QA or rejection**, even if PD alone is moderate.
+
+### Decision Logic
+
+- **Fast Track** → automatic approval
+
+- **Approve with Caution** → standard underwriting
+
+- **QA** → manual review
+
+- **Review / Reject** → decline or escalate
+
+This mirrors how banks combine risk models, financial loss, and credit policy to make safe, explainable decisions.
+
 
 ## RAG-Based Explainable Credit Decisions
 
