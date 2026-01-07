@@ -1,4 +1,4 @@
-# Credit-Risk-Modeling-and-RAG-Enhanced-Explainable-Decision-Support-System
+# Credit Risk Modeling & AI-Driven Credit Quality Assurance System
 ## 📖 Overview
 
 This project builds an end-to-end credit risk decision support system using machine-learning and Retrieval-Augmented Generation (RAG).
