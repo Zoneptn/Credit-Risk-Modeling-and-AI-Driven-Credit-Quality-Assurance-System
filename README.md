@@ -1,11 +1,17 @@
 # Credit Risk Modeling & AI-Driven Credit Quality Assurance System
 ## 📖 Overview
 
-This project builds an end-to-end credit risk decision support system using machine-learning and Retrieval-Augmented Generation (RAG).
-A LightGBM Probability-of-Default (PD) model is trained on LendingClub data and deployed via Streamlit for real-time loan pre-screening.
-RAG is used to provide policy-aware, explainable recommendations to support Credit Quality Assurance (QA) and underwriting decisions.
+This project implements an end-to-end, AI-assisted credit risk and Quality Assurance (QA) system that combines:
 
-The goal is not just to predict default, but to support consistent, explainable, and policy-aligned credit decisions.
+- A machine-learning Probability of Default (PD) model (LightGBM),
+
+- Rule-based credit policy segmentation,
+
+- Retrieval-Augmented Generation (RAG) over bank credit policy documents, and
+
+- An interactive Streamlit dashboard for human-in-the-loop review.
+
+The goal is not only to predict default, but to support consistent, explainable, and policy-aligned credit decisions suitable for auditors and regulators.
 
 ## 🏦 Business Problem
 
@@ -40,8 +46,17 @@ PD + Risk Band
          ↓
 RAG (Credit Policy)
          ↓
-Explainable Credit Recommendation
+LLM Reasoning (Explainable Decision)
+         ↓
+Audit Log (Governance & Traceability)
 ```
+## Workflow Orchestration (LangGraph)
+
+This project uses **LangGraph** to orchestrate the end-to-end decision workflow as a directed state machine. Each step of the pipeline (risk screening, policy retrieval, LLM reasoning, parsing, and auditing) is implemented as a node, with shared state passed between nodes to ensure traceability and reproducibility of decisions.
+
+- LangGraph manages the multi-step decision pipeline.  
+- Ensures structured state passing between nodes (`case`, `policy`, `decision`, `decision_source`).  
+- Makes the system modular, debuggable, and auditable.
 
 ## ⚙️ Model Selection
 
@@ -51,11 +66,12 @@ Three models were evaluated for Probability of Default (PD) prediction:
 - XGBoost
 - LightGBM
 
-Each model was trained and evaluated using ROC–AUC and KS statistics. 
-Hyperparameter tuning was applied using cross-validation.
-
-The tuned LightGBM model achieved the strongest discriminatory power and was therefore selected as the final PD engine for deployment.
-
+Each model was trained and evaluated using:
+- ROC–AUC
+- KS statistic
+- Cross-validated hyperparameter tuning
+  
+The LightGBM (Grid Search) model was selected as the final PD engine due to its superior discrimination, stability, and suitability for downstream risk analysis.
 
 ## Model Performance Comparision
 
@@ -236,32 +252,43 @@ Start the Streamlit app:
 python -m streamlit run app.py
 ```
 
-## 🛠 Tech Stack
-A) Data & ML
-- pandas
-- numpy
-- scikit-learn
-- xgboost
-- lightgbm
-- catboost
-- scipy
-- shap
+### **A) Data & Core Python**
+- pandas  
+- numpy (implicit with pandas/ML stack)  
+- python standard libraries:
+  - `re`
+  - `json`
+  - `os`
+  - `datetime`
 
-B) Visualization & EDA
+### **B) ML & Explainability**
+- scikit-learn  
+- xgboost  
+- lightgbm  
+- scipy  
+- shap  
 
-- matplotlib
-- seaborn
+### **C) LLM + RAG + Workflow**
+- **langchain**
+- **langchain-community**
+  - `PyPDFLoader`
+  - `DirectoryLoader`
+  - `Chroma` (vector store)
+- **langchain-openai**
+  - `OpenAI`
+  - `OpenAIEmbeddings`
+  - `ChatOpenAI`
+- **langchain-huggingface**
+  - `HuggingFaceEmbeddings`
+- **langchain-text-splitters**
+  - `RecursiveCharacterTextSplitter`
+- **ChromaDB** (vector database)
+- **LangGraph**
+  - `StateGraph` for workflow orchestration
 
-C) LLM + RAG
-- langchain
-- langchain-community
-- langchain-openai
-- langchain-huggingface
-- faiss-cpu
-- openai (via langchain_openai)
-
-D) App & Deployment
-- streamlit
+### **D) App & Deployment**
+- streamlit  
+- joblib  
 - joblib
 ---
 ⚠ This project uses simulated credit policy and does not represent any real bank’s underwriting rules.
