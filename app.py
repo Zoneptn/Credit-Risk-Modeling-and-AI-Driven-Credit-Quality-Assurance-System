@@ -7,9 +7,9 @@ st.title("LLM-Powered Credit Quality Assurance")
 
 
 # Load data
-qa_cases = pd.read_csv(r'C:\Users\USER\Desktop\data set\lending club data set\result table\qa_cases.csv')
-ai_decisions = pd.read_csv(r"C:\Users\USER\Desktop\data set\lending club data set\result table\ai_decisions.csv")
-audit = pd.read_csv(r"C:\Users\USER\Desktop\data set\lending club data set\result table\qa_decision_audit.csv")
+qa_cases = pd.read_csv("result_table/qa_cases.csv")
+ai_decisions = pd.read_csv("result_table/ai_decisions.csv")
+audit = pd.read_csv("result_table/qa_decision_audit.csv")
 
 ai_decisions = ai_decisions.reset_index(drop=True)
 
@@ -55,6 +55,7 @@ st.write(case.next_step)
 
 st.markdown("### AI Explanation")
 st.write(case.ai_reason)
+
 
 
 
