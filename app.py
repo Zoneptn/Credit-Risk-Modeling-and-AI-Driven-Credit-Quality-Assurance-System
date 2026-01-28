@@ -8,7 +8,7 @@ st.title("LLM-Powered Credit Quality Assurance")
 
 # Load data
 qa_cases = pd.read_csv("result_table/qa_cases.csv")
-ai_decisions = pd.read_csv("result_table/ai_decisions.csv")
+ai_decisions = pd.read_csv("result_table/ai_decision.csv")
 
 
 ai_decisions = ai_decisions.reset_index(drop=True)
@@ -67,6 +67,7 @@ st.write(case.next_step)
 
 st.markdown("### AI Explanation")
 st.write(case.ai_reason)
+
 
 
 
