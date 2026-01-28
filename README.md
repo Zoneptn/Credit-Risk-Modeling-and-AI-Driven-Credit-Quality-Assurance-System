@@ -46,9 +46,7 @@ PD + Risk Band
          ↓
 RAG (Credit Policy)
          ↓
-LLM Reasoning (Explainable Decision)
-         ↓
-Audit Log (Governance & Traceability)
+LLM Reasoning (Explainable Decision) + Audit Log (Governance & Traceability)
 ```
 ## Workflow Orchestration (LangGraph)
 
