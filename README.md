@@ -228,7 +228,7 @@ Credit analysts can:
 - Receive AI-generated explanations and next-step recommendations
 ### Demo
 ## Live demo
-`https://credit-risk-modeling-and-ai-driven-credit-quality-assurance-sy.streamlit.app/`
+https://credit-risk-modeling-and-ai-driven-credit-quality-assurance-sy.streamlit.app/
 
 #### Demo1
 ![Demo1](/screenshot/app2.png)
