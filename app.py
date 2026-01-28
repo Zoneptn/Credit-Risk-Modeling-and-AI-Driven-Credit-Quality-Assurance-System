@@ -46,16 +46,6 @@ col2.metric("Policy Segment", case.Action)
 col3.metric("AI Decision", case.ai_decision)
 col4.metric("Expected Loss", f"${case.expected_loss:,.0f}")
 
-st.subheader("Version Info")
-a1,a2,a3 = st.columns(3)
-a1.metric("Model Version", case.model_version)
-a2.metric("LangGraph Version", case.langgraph_version)
-a3.metric(
-    "Timestamp",
-    pd.to_datetime(case.timestamp).strftime("%Y-%m-%d %H:%M:%S UTC")
-)
-
-
 st.markdown("### Top Risk Drivers")
 st.write(case.top_risk_factors)
 
@@ -67,6 +57,17 @@ st.write(case.next_step)
 
 st.markdown("### AI Explanation")
 st.write(case.ai_reason)
+
+st.subheader("Version Info")
+a1,a2,a3 = st.columns(3)
+a1.metric("Model Version", case.model_version)
+a2.metric("LangGraph Version", case.langgraph_version)
+a3.metric(
+    "Timestamp",
+    pd.to_datetime(case.timestamp).strftime("%Y-%m-%d %H:%M:%S UTC")
+)
+
+
 
 
 
