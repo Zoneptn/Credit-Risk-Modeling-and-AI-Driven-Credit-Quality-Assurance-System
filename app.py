@@ -9,7 +9,7 @@ st.title("LLM-Powered Credit Quality Assurance")
 # Load data
 qa_cases = pd.read_csv("result_table/qa_cases.csv")
 ai_decisions = pd.read_csv("result_table/ai_decisions.csv")
-audit = pd.read_csv("result_table/qa_decision_audit.csv")
+
 
 ai_decisions = ai_decisions.reset_index(drop=True)
 
@@ -19,6 +19,9 @@ df.index = df.index +1
 
 st.subheader("QA Case List")
 st.dataframe(df[["case_id", "PD", "Action", "ai_decision"]])
+st.caption(
+    "⚠️ Note: This dashboard shows a sample run using only 10 customer cases for demonstration purposes."
+)
 
 # Select loan
 selected_id = st.selectbox("Select a Loan ID", df["case_id"])
@@ -37,12 +40,21 @@ d5.metric("Employment Length", f"{case.emp_length:.1f} yrs")
 d6.metric("Income Verified", case.verification_status)
 
 st.subheader("Loan Risk Summary")
-col1, col2, col3,col4,col5 = st.columns(5)
+col1, col2, col3,col4 = st.columns(4)
 col1.metric("Probability of Default", f"{case.PD:.2%}")
 col2.metric("Policy Segment", case.Action)
 col3.metric("AI Decision", case.ai_decision)
 col4.metric("Expected Loss", f"${case.expected_loss:,.0f}")
-col5.metric("Decision Source", case.decision_source)
+
+st.subheader("Version Info")
+a1,a2,a3 = st.columns(3)
+a1.metric("Model Version", case.model_version)
+a2.metric("LangGraph Version", case.langgraph_version)
+a3.metric(
+    "Timestamp",
+    pd.to_datetime(case.timestamp).strftime("%Y-%m-%d %H:%M:%S UTC")
+)
+
 
 st.markdown("### Top Risk Drivers")
 st.write(case.top_risk_factors)
@@ -55,6 +67,7 @@ st.write(case.next_step)
 
 st.markdown("### AI Explanation")
 st.write(case.ai_reason)
+
 
 
 
