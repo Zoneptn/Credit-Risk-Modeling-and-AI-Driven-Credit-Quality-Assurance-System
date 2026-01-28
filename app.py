@@ -14,7 +14,7 @@ ai_decisions = pd.read_csv("result_table/ai_decisions.csv")
 ai_decisions = ai_decisions.reset_index(drop=True)
 
 # Merge AI output back to cases
-df = qa_cases.reset_index().merge(ai_decisions, on="case_id", how="left").merge(audit[["case_id", "decision_source"]], on="case_id", how="left")
+df = qa_cases.reset_index().merge(ai_decisions, on="case_id", how="left")
 df.index = df.index +1
 
 st.subheader("QA Case List")
@@ -67,6 +67,7 @@ st.write(case.next_step)
 
 st.markdown("### AI Explanation")
 st.write(case.ai_reason)
+
 
 
 
